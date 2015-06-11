@@ -1,0 +1,57 @@
+__author__ = 'Dario Hermida'
+import random
+"""
+elo_calculator (rating1, results1, rating2, results2)
+#ratings will be updated depending on results
+#it is taken into account the distance between ratings
+#the higher the rating the lower the won elo and the higher the loss
+#the lower the rating the higher the won elo and the lower the loss
+
+"""
+def elo_calculator(rating1, result1, rating2, result2):
+    elo_in_game = rating1 + rating2
+    elo_average = (rating1 + rating2) / 2
+    
+    #elo factor change setups
+    elo_offset = 10
+    elo_increase_factor = 3
+    elo_increase = (elo_offset + 1) * elo_increase_factor
+    
+    # winning probability for each player
+    win1 = rating1 / elo_in_game
+    win2 = rating2 / elo_in_game
+    if result1 == 1:
+        if win1 > win2:
+            # player 1 is winning and is the strongest
+            update1 = elo_increase * win2
+            update2 = -1 * elo_increase * win2
+        else:
+            # player 1 is winning and is the weakest
+            update1 = elo_increase * win2
+            update2 = -1 * elo_increase * win2
+    else:
+        if win1 > win2:
+            # player 1 is losing and is the strongest
+            update1 = -1 * elo_increase * win1
+            update2 = elo_increase * win1
+        else:
+            # player 1 is losing and is the weakest
+            update1 = -1 * elo_increase * win1
+            update2 = elo_increase * win1
+    print ('this is the update for player 1: {:.3f} with prob: {:.3f}'.format(update1, win1))
+    print ('this is the update for player 2: {:.3f} with prob: {:.3f}'.format(update2, win2))
+    rating1 += update1
+    rating2 += update2
+    return rating1, rating2
+
+#case testing
+elo1 = 1150
+elo2 = 1850
+aux = 0
+for k in range(100):
+    print ('________ match number {}'.format(k+1))
+    #aux = random.randint(0,1)
+    if k > 50: aux = 1 # half of the games won by player 1
+    elo1, elo2 = elo_calculator(elo1, aux, elo2, 1 - aux)
+    print (elo1)
+    print (elo2)
