@@ -3,24 +3,20 @@ import random
 """
 elo_calculator (rating1, results1, rating2, results2)
 #ratings will be updated depending on results
-#it is taken into account the distance between ratings
-#the higher the rating the lower the won elo and the higher the loss
-#the lower the rating the higher the won elo and the lower the loss
+#it is taken into account the distance between ratings, higher distance means higher deviations
 
 """
 def elo_calculator(rating1, result1, rating2, result2):
     elo_in_game = rating1 + rating2
     elo_average = (rating1 + rating2) / 2
-    
     #elo factor change setups
-    elo_offset = 10
+    elo_offset = 15
     elo_increase_factor = 3
     elo_increase = (elo_offset + 1) * elo_increase_factor
-    
     # winning probability for each player
     win1 = rating1 / elo_in_game
     win2 = rating2 / elo_in_game
-    if result1 == 1:
+    if result1 == 3:
         if win1 > win2:
             # player 1 is winning and is the strongest
             update1 = elo_increase * win2
@@ -40,18 +36,42 @@ def elo_calculator(rating1, result1, rating2, result2):
             update2 = elo_increase * win1
     print ('this is the update for player 1: {:.3f} with prob: {:.3f}'.format(update1, win1))
     print ('this is the update for player 2: {:.3f} with prob: {:.3f}'.format(update2, win2))
+    #match results accounting
+    if result1 > result2:
+        score1 = 5 - result2
+        score2 = result2
+        score_factor1 = 1 + ((score1 - 3 ) / 20)
+        score_factor2 = 1 - (score2 / 20)
+    else:
+        score1 = result1
+        score2 = 5 - result1
+        score_factor2 = 1 + ((score2 - 3) / 20)
+        score_factor1 = 1 - (score1 / 20)
+    print('score factor p1 {}, score factor p2 {}'.format(score_factor1, score_factor2))
+    #stablishing correction factors for 5 to 0 points.
+    # 5, 4 points small bonus
+    # 3 points full gain
+    # 2,1 points small bonus on lose
+    # 0 points full lose
+    print ('this is the Real update for player 1: {:.3f}'.format(score_factor1 * update1))
+    print ('this is the Real update for player 2: {:.3f}'.format(score_factor2 * update2))
     rating1 += update1
     rating2 += update2
+    global maximum
+    if abs(update1) > maximum: maximum = abs(update1)
+    print ('this is the maximum update: {}'.format(maximum))
     return rating1, rating2
 
-#case testing
-elo1 = 1150
-elo2 = 1850
+elo1 = 2000
+elo2 = 2000
 aux = 0
-for k in range(100):
+maximum = 0
+for k in range(50):
     print ('________ match number {}'.format(k+1))
-    #aux = random.randint(0,1)
-    if k > 50: aux = 1 # half of the games won by player 1
-    elo1, elo2 = elo_calculator(elo1, aux, elo2, 1 - aux)
+    aux1 = 3
+    aux2 = random.randint(0,2)
+    print (aux1, aux2)
+    #if k > 50: aux = 1
+    elo1, elo2 = elo_calculator(elo1, aux2, elo2,aux1)
     print (elo1)
     print (elo2)
