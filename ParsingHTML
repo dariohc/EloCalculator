@@ -1,0 +1,23 @@
+__author__ = 'Dario Hermida'
+from sys import argv
+
+script, filename, create = argv
+count = 0
+print ("Opening the file:")
+target = open(filename, 'r')
+output = open(create, 'w')
+writing = True
+
+print ("I'm going to read from the target file:")
+
+for line in target:
+    if "memberID" in line:
+        #k = input()
+        #print (line)
+        output.write(line)
+    count += 1
+
+print ("And finally, we close it")
+
+target.close()
+output.close()
