@@ -1,17 +1,21 @@
 __author__ = 'Dario Hermida'
 import random
+import matplotlib.pyplot as plt
+
 """
 elo_calculator (rating1, results1, rating2, results2)
 #ratings will be updated depending on results
 #it is taken into account the distance between ratings, higher distance means higher deviations
 
 """
+simulation_games = 100
+
 def elo_calculator(rating1, result1, rating2, result2):
     elo_in_game = rating1 + rating2
-    elo_average = (rating1 + rating2) / 2
-    #elo factor change setups
+    #  elo_average = (rating1 + rating2) / 2
+    #  elo factor change setups
     elo_offset = 15
-    elo_increase_factor = 3
+    elo_increase_factor = 2.2
     elo_increase = (elo_offset + 1) * elo_increase_factor
     # winning probability for each player
     win1 = rating1 / elo_in_game
@@ -34,8 +38,8 @@ def elo_calculator(rating1, result1, rating2, result2):
             # player 1 is losing and is the weakest
             update1 = -1 * elo_increase * win1
             update2 = elo_increase * win1
-    print ('this is the update for player 1: {:.3f} with prob: {:.3f}'.format(update1, win1))
-    print ('this is the update for player 2: {:.3f} with prob: {:.3f}'.format(update2, win2))
+    print('this is the update for player 1: {:.3f} with prob: {:.3f}'.format(update1, win1))
+    print('this is the update for player 2: {:.3f} with prob: {:.3f}'.format(update2, win2))
     #match results accounting
     if result1 > result2:
         score1 = 5 - result2
@@ -53,25 +57,33 @@ def elo_calculator(rating1, result1, rating2, result2):
     # 3 points full gain
     # 2,1 points small bonus on lose
     # 0 points full lose
-    print ('this is the Real update for player 1: {:.3f}'.format(score_factor1 * update1))
-    print ('this is the Real update for player 2: {:.3f}'.format(score_factor2 * update2))
+    print('this is the Real update for player 1: {:.3f}'.format(score_factor1 * update1))
+    print('this is the Real update for player 2: {:.3f}'.format(score_factor2 * update2))
     rating1 += update1
     rating2 += update2
     global maximum
     if abs(update1) > maximum: maximum = abs(update1)
-    print ('this is the maximum update: {}'.format(maximum))
+    print('this is the maximum update: {}'.format(maximum))
     return rating1, rating2
 
-elo1 = 2000
-elo2 = 2000
+# test case for the previous function
+
+elo1_list = []
+elo2_list = []
+elo1, elo2 = [1800, 1800]
 aux = 0
 maximum = 0
-for k in range(50):
-    print ('________ match number {}'.format(k+1))
-    aux1 = 3
-    aux2 = random.randint(0,2)
-    print (aux1, aux2)
-    #if k > 50: aux = 1
-    elo1, elo2 = elo_calculator(elo1, aux2, elo2,aux1)
-    print (elo1)
-    print (elo2)
+
+for k in range(simulation_games):
+    print('________ match number {}'.format(k+1))
+    aux1 = random.randint(0, 3)
+    aux2 = random.randint(0, 3)
+    print(aux1, aux2)
+
+    elo1, elo2 = elo_calculator(elo1, aux2, elo2, aux1)
+    elo1_list.append(elo1)
+    elo2_list.append(elo2)
+
+time = range(simulation_games)
+plt.plot(time, elo1_list, 'g--', time, elo2_list, 'r--')
+plt.show()
