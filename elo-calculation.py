@@ -8,7 +8,7 @@ elo_calculator (rating1, results1, rating2, results2)
 #it is taken into account the distance between ratings, higher distance means higher deviations
 
 """
-simulation_games = 50000
+simulation_games = 100
 debug = 0
 
 def elo_calculator(rating1, result1, rating2, result2):
@@ -85,8 +85,9 @@ for k in range(simulation_games):
     if debug == 1:
         print('________ match number {}'.format(k+1))
     aux1, aux2 = [0, 0]
-    aux1 = random.randint(0, 1)
-    if aux1 == 1:
+    # aux1 = random.randint(0, 1)
+    aux1 = random.uniform(0, 1)
+    if aux1 >= 0.6:
         aux1 = 3
     else:
         aux2 = 3
